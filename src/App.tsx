@@ -1,35 +1,70 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import React, { useState, useEffect } from 'react';
+import { useTimer } from './hooks/useTimer';
+import { TimerDisplay } from './components/TimerDisplay';
+import { ModeSelector } from './components/ModeSelector';
+import { Controls } from './components/Controls';
+import { Mode, DURATIONS } from './constants/durations';
+import { MODE_COLORS } from './constants/colors';
+import styles from './App.module.css';
 
-function App() {
-  const [count, setCount] = useState(0)
+const App: React.FC = () => {
+  const [mode, setMode] = useState<Mode>('focus');
+  const { timeRemaining, status, start, pause, reset } = useTimer(DURATIONS[mode]);
+
+  const colors = MODE_COLORS[mode];
+  const isRunning = status === 'running';
+
+  // Update CSS variables for theming
+  useEffect(() => {
+    const root = document.documentElement;
+    root.style.setProperty('--bg-color', colors.bg);
+    root.style.setProperty('--accent-color', colors.accent);
+    root.style.setProperty('--text-color', colors.text);
+    root.style.setProperty('--accent-glow', `${colors.accent}40`);
+  }, [colors]);
+
+  const handleModeChange = (newMode: Mode) => {
+    setMode(newMode);
+  };
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+    <div className={styles.app}>
+      <div className={styles.backgroundOrbs}>
+        <div className={styles.orb} />
+        <div className={styles.orb} />
+        <div className={styles.orb} />
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
-}
 
-export default App
+      <main className={styles.main}>
+        <header className={styles.header}>
+          <h1 className={styles.logo}>🍅 Pomodoro</h1>
+        </header>
+
+        <ModeSelector
+          currentMode={mode}
+          onModeChange={handleModeChange}
+          disabled={isRunning}
+        />
+
+        <TimerDisplay
+          timeRemaining={timeRemaining}
+          mode={mode}
+          isRunning={isRunning}
+        />
+
+        <Controls
+          status={status}
+          onStart={start}
+          onPause={pause}
+          onReset={reset}
+        />
+      </main>
+
+      <footer className={styles.footer}>
+        <p>Stay focused. Take breaks. Repeat.</p>
+      </footer>
+    </div>
+  );
+};
+
+export default App;

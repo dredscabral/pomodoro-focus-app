@@ -1,0 +1,51 @@
+.container {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 50px;
+  padding: 0.25rem;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.modeButton {
+  position: relative;
+  z-index: 2;
+  background: transparent;
+  border: none;
+  padding: 0.75rem 1.25rem;
+  font-family: 'Instrument Sans', sans-serif;
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: inherit;
+  opacity: 0.6;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+  white-space: nowrap;
+  text-align: center;
+}
+
+.modeButton:hover:not(:disabled) {
+  opacity: 0.9;
+}
+
+.modeButton.active {
+  opacity: 1;
+}
+
+.modeButton:disabled {
+  cursor: not-allowed;
+}
+
+.slider {
+  position: absolute;
+  top: 0.25rem;
+  bottom: 0.25rem;
+  left: calc(0.25rem + var(--index) * (100% - 0.5rem) / 3);
+  width: calc((100% - 0.5rem) / 3);
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 50px;
+  transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 1;
+}
